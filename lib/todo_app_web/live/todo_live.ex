@@ -35,6 +35,13 @@ defmodule TodoAppWeb.TodoLive do
           />
           <span><%= todo.title %></span>
         </label>
+        <button
+          type="button"
+          phx-click="delete"
+          phx-value-id={todo.id}
+        >
+          X
+        </button>
       </div>
     <% end %>
 
@@ -54,6 +61,14 @@ defmodule TodoAppWeb.TodoLive do
     socket =
       socket
       |> toggle_done(id)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    socket =
+      socket
+      |> delete_todo(id)
 
     {:noreply, socket}
   end
@@ -97,6 +112,19 @@ defmodule TodoAppWeb.TodoLive do
 
       todo ->
         Todos.update_todo(todo, callback.(todo))
+    end
+
+    socket
+    |> fetch()
+  end
+
+  defp delete_todo(socket, id) do
+    case Todos.get_todo(id) do
+      :nil ->
+        :false
+
+      todo ->
+        Todos.delete_todo(todo)
     end
 
     socket
