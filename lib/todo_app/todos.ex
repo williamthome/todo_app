@@ -22,6 +22,23 @@ defmodule TodoApp.Todos do
   end
 
   @doc """
+  Returns the list of sorted todos by done and then by title.
+
+  ## Examples
+
+      iex> list_sorted_todos()
+      [%Todo{}, ...]
+
+  """
+  def list_sorted_todos do
+    from(
+      t in Todo,
+      order_by: [asc: t.done, asc: t.title]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Gets a single todo.
 
   Raises `Ecto.NoResultsError` if the Todo does not exist.

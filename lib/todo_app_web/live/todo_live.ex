@@ -75,7 +75,7 @@ defmodule TodoAppWeb.TodoLive do
 
   defp fetch(socket) do
     socket
-    |> assign(todos: Todos.list_todos())
+    |> assign(todos: Todos.list_sorted_todos())
   end
 
   defp changeset(socket) do
