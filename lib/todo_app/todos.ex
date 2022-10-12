@@ -38,6 +38,22 @@ defmodule TodoApp.Todos do
   def get_todo!(id), do: Repo.get!(Todo, id)
 
   @doc """
+  Gets a single todo.
+
+  Returns nil if no result was found.
+
+  ## Examples
+
+      iex> get_todo!(123)
+      %Todo{}
+
+      iex> get_todo!(456)
+      nil
+
+  """
+  def get_todo(id), do: Repo.get(Todo, id)
+
+  @doc """
   Creates a todo.
 
   ## Examples

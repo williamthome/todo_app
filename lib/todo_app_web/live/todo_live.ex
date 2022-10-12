@@ -26,8 +26,13 @@ defmodule TodoAppWeb.TodoLive do
 
     <%= for todo <- @todos do %>
       <div>
-        <%= todo.done %>
-        <%= todo.title %>
+        <input
+          type="checkbox"
+          checked={todo.done}
+          phx-click="toggle_done"
+          phx-value-id={todo.id}
+        />
+        <span><%= todo.title %></span>
       </div>
     <% end %>
 
@@ -50,6 +55,14 @@ defmodule TodoAppWeb.TodoLive do
     {:noreply, socket}
   end
 
+  def handle_event("toggle_done", %{"id" => id}, socket) do
+    socket =
+      socket
+      |> toggle_done(id)
+
+    {:noreply, socket}
+  end
+
   defp fetch(socket) do
     socket
     |> assign(todos: Todos.list_todos())
@@ -63,5 +76,23 @@ defmodule TodoAppWeb.TodoLive do
   defp changeset(socket, changeset) do
     socket
     |> assign(changeset: changeset)
+  end
+
+  defp toggle_done(socket, id) do
+    socket
+    |> update_todo(id, fn todo -> %{done: !todo.done} end)
+  end
+
+  defp update_todo(socket, id, callback) do
+    case Todos.get_todo(id) do
+      :nil ->
+        :false
+
+      todo ->
+        Todos.update_todo(todo, callback.(todo))
+    end
+
+    socket
+    |> fetch()
   end
 end
