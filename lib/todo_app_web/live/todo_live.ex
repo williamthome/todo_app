@@ -26,13 +26,15 @@ defmodule TodoAppWeb.TodoLive do
 
     <%= for todo <- @todos do %>
       <div>
-        <input
-          type="checkbox"
-          checked={todo.done}
-          phx-click="toggle_done"
-          phx-value-id={todo.id}
-        />
-        <span><%= todo.title %></span>
+        <label>
+          <input
+            type="checkbox"
+            checked={todo.done}
+            phx-click="toggle_done"
+            phx-value-id={todo.id}
+          />
+          <span><%= todo.title %></span>
+        </label>
       </div>
     <% end %>
 
