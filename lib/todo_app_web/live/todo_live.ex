@@ -17,7 +17,7 @@ defmodule TodoAppWeb.TodoLive do
     <.form
       :let={f}
       for={@changeset}
-      phx-submit="add"
+      phx-submit="create"
     >
       <%= checkbox f, :done %>
       <%= text_input f, :title, placeholder: "Create a new todo.." %>
@@ -40,17 +40,10 @@ defmodule TodoAppWeb.TodoLive do
     """
   end
 
-  def handle_event("add", %{"todo" => todo}, socket) do
+  def handle_event("create", %{"todo" => attrs}, socket) do
     socket =
-      case Todos.create_todo(todo) do
-        {:ok, %Todo{}} ->
-          socket
-          |> fetch()
-
-        {:error, changeset} ->
-          socket
-          |> changeset(changeset)
-      end
+      socket
+      |> create_todo(attrs)
 
     {:noreply, socket}
   end
@@ -76,6 +69,18 @@ defmodule TodoAppWeb.TodoLive do
   defp changeset(socket, changeset) do
     socket
     |> assign(changeset: changeset)
+  end
+
+  defp create_todo(socket, attrs) do
+    case Todos.create_todo(attrs) do
+      {:ok, %Todo{}} ->
+        socket
+        |> fetch()
+
+      {:error, changeset} ->
+        socket
+        |> changeset(changeset)
+    end
   end
 
   defp toggle_done(socket, id) do
