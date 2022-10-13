@@ -5,6 +5,7 @@ defmodule TodoAppWeb.TodoLive do
   alias TodoApp.Todos.Todo
 
   import TodoAppWeb.Components.Todo
+  import TodoAppWeb.Components.Filter
 
   @filters [
     %{name: "all", label: "All", clause: [], selected: true},
@@ -48,14 +49,10 @@ defmodule TodoAppWeb.TodoLive do
 
     <div>
       <%= for filter <- @filters do %>
-        <button
-          type="button"
-          phx-click="filter"
-          phx-value-name={filter.name}
-        >
-          <%= filter.label %>
-          <%= if Map.get(filter, :selected), do: "(Selected)" %>
-        </button>
+        <.filter
+          filter={filter}
+          filter_event="filter"
+        />
       <% end %>
     </div>
 
