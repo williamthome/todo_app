@@ -23,16 +23,18 @@ defmodule TodoApp.Todos do
 
   @doc """
   Returns the list of sorted todos by done and then by title.
+  Clause is optional.
 
   ## Examples
 
-      iex> list_sorted_todos()
+      iex> list_sorted_todos([done: true])
       [%Todo{}, ...]
 
   """
-  def list_sorted_todos do
+  def list_sorted_todos(clause \\ []) do
     from(
       t in Todo,
+      where: ^clause,
       order_by: [asc: t.done, asc: t.title]
     )
     |> Repo.all()

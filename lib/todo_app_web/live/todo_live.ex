@@ -3,9 +3,16 @@ defmodule TodoAppWeb.TodoLive do
   alias TodoApp.Todos
   alias TodoApp.Todos.Todo
 
+  @filters [
+    %{name: "all", label: "All", selected: true},
+    %{name: "active", label: "Active"},
+    %{name: "completed", label: "Completed"}
+  ]
+
   def mount(_args, _session, socket) do
     socket =
       socket
+      |> assign(filters: @filters)
       |> changeset()
       |> fetch()
 
@@ -45,6 +52,21 @@ defmodule TodoAppWeb.TodoLive do
       </div>
     <% end %>
 
+    <div>
+      <%= for filter <- @filters do %>
+        <button
+          type="button"
+          phx-click="filter"
+          phx-value-name={filter.name}
+        >
+          <%= filter.label %>
+          <%= if Map.get(filter, :selected) do %>
+            (Selected)
+          <% end %>
+        </button>
+      <% end %>
+    </div>
+
     There is <%= Enum.count(@todos) %> todos.
     """
   end
@@ -73,9 +95,38 @@ defmodule TodoAppWeb.TodoLive do
     {:noreply, socket}
   end
 
+  def handle_event("filter", %{"name" => filter_name}, socket) do
+    socket =
+      socket
+      |> filter(filter_name)
+
+    {:noreply, socket}
+  end
+
   defp fetch(socket) do
+    filter =
+      Enum.find(socket.assigns.filters, fn f ->
+        Map.get(f, :selected) == true
+      end)
+
+    filter_name =
+      case filter do
+        nil ->
+          "all"
+
+        %{:name => filter_name} ->
+          filter_name
+      end
+
+    clause =
+      case filter_name do
+        "all" -> []
+        "active" -> [done: false]
+        "completed" -> [done: true]
+      end
+
     socket
-    |> assign(todos: Todos.list_sorted_todos())
+    |> assign(todos: Todos.list_sorted_todos(clause))
   end
 
   defp changeset(socket) do
@@ -107,8 +158,8 @@ defmodule TodoAppWeb.TodoLive do
 
   defp update_todo(socket, id, callback) do
     case Todos.get_todo(id) do
-      :nil ->
-        :false
+      nil ->
+        false
 
       todo ->
         Todos.update_todo(todo, callback.(todo))
@@ -120,14 +171,29 @@ defmodule TodoAppWeb.TodoLive do
 
   defp delete_todo(socket, id) do
     case Todos.get_todo(id) do
-      :nil ->
-        :false
+      nil ->
+        false
 
       todo ->
         Todos.delete_todo(todo)
     end
 
     socket
+    |> fetch()
+  end
+
+  defp filter(socket, filter_name) do
+    filters =
+      Enum.map(socket.assigns.filters, fn
+        %{:name => ^filter_name} = filter ->
+          Map.put(filter, :selected, true)
+
+        filter ->
+          Map.put(filter, :selected, false)
+      end)
+
+    socket
+    |> assign(filters: filters)
     |> fetch()
   end
 end
