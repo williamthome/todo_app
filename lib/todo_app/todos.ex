@@ -125,6 +125,23 @@ defmodule TodoApp.Todos do
   end
 
   @doc """
+  Deletes all done todos.
+
+  ## Examples
+
+      iex> clear_completed()
+      {1, nil}
+
+  """
+  def clear_completed do
+    from(
+      t in Todo,
+      where: t.done
+    )
+    |> Repo.delete_all()
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking todo changes.
 
   ## Examples

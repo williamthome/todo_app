@@ -52,6 +52,10 @@ defmodule TodoAppWeb.TodoLive do
       </div>
     <% end %>
 
+    <button type="button" phx-click="clear">
+      Clear Completed
+    </button>
+
     <div>
       <%= for filter <- @filters do %>
         <button
@@ -97,6 +101,14 @@ defmodule TodoAppWeb.TodoLive do
     socket =
       socket
       |> filter(filter_name)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("clear", %{}, socket) do
+    socket =
+      socket
+      |> clear_completed()
 
     {:noreply, socket}
   end
@@ -192,6 +204,13 @@ defmodule TodoAppWeb.TodoLive do
 
     socket
     |> assign(filters: filters)
+    |> fetch()
+  end
+
+  defp clear_completed(socket) do
+    Todos.clear_completed()
+
+    socket
     |> fetch()
   end
 end
