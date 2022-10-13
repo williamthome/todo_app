@@ -151,26 +151,16 @@ defmodule TodoAppWeb.TodoLive do
   end
 
   defp update_todo(socket, id, callback) do
-    case Todos.get_todo(id) do
-      nil ->
-        false
-
-      todo ->
-        Todos.update_todo(todo, callback.(todo))
-    end
+    Todos.get_todo_and_callback(id, fn
+      todo -> Todos.update_todo(todo, callback.(todo))
+    end)
 
     socket
     |> fetch()
   end
 
   defp delete_todo(socket, id) do
-    case Todos.get_todo(id) do
-      nil ->
-        false
-
-      todo ->
-        Todos.delete_todo(todo)
-    end
+    Todos.get_todo_and_callback(id, &Todos.delete_todo/1)
 
     socket
     |> fetch()

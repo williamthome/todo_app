@@ -73,6 +73,30 @@ defmodule TodoApp.Todos do
   def get_todo(id), do: Repo.get(Todo, id)
 
   @doc """
+  Gets a single todo and executes a callback function.
+
+  Returns nil if no result was found.
+
+  ## Examples
+
+      iex> get_todo_and_callback(123, fn _todo -> ok end)
+      {%Todo{}, ok}
+
+      iex> get_todo_and_callback(456)
+      nil
+
+  """
+  def get_todo_and_callback(id, callback) do
+    case get_todo(id) do
+      nil ->
+        nil
+
+      todo ->
+        {todo, callback.(todo)}
+    end
+  end
+
+  @doc """
   Creates a todo.
 
   ## Examples
