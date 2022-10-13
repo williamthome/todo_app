@@ -60,9 +60,7 @@ defmodule TodoAppWeb.TodoLive do
           phx-value-name={filter.name}
         >
           <%= filter.label %>
-          <%= if Map.get(filter, :selected) do %>
-            (Selected)
-          <% end %>
+          <%= if Map.get(filter, :selected), do: "(Selected)" %>
         </button>
       <% end %>
     </div>
