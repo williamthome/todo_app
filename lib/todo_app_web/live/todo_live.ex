@@ -4,9 +4,9 @@ defmodule TodoAppWeb.TodoLive do
   alias TodoApp.Todos.Todo
 
   @filters [
-    %{name: "all", label: "All", selected: true},
-    %{name: "active", label: "Active"},
-    %{name: "completed", label: "Completed"}
+    %{name: "all", label: "All", clause: [], selected: true},
+    %{name: "active", label: "Active", clause: [done: false]},
+    %{name: "completed", label: "Completed", clause: [done: true]}
   ]
 
   def mount(_args, _session, socket) do
@@ -119,24 +119,8 @@ defmodule TodoAppWeb.TodoLive do
         Map.get(f, :selected) == true
       end)
 
-    filter_name =
-      case filter do
-        nil ->
-          "all"
-
-        %{:name => filter_name} ->
-          filter_name
-      end
-
-    clause =
-      case filter_name do
-        "all" -> []
-        "active" -> [done: false]
-        "completed" -> [done: true]
-      end
-
     socket
-    |> assign(todos: Todos.list_sorted_todos(clause))
+    |> assign(todos: Todos.list_sorted_todos(filter.clause))
   end
 
   defp changeset(socket) do
