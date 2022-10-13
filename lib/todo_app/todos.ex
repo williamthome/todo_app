@@ -110,7 +110,9 @@ defmodule TodoApp.Todos do
 
   """
   def create_todo(attrs \\ %{}) do
-    %Todo{}
+    %Todo{
+      position: Repo.aggregate(Todo, :count, :id)
+    }
     |> Todo.changeset(attrs)
     |> Repo.insert()
   end
