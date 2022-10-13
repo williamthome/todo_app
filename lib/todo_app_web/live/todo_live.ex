@@ -1,7 +1,10 @@
 defmodule TodoAppWeb.TodoLive do
   use TodoAppWeb, :live_view
+
   alias TodoApp.Todos
   alias TodoApp.Todos.Todo
+
+  import TodoAppWeb.Components.Todo
 
   @filters [
     %{name: "all", label: "All", clause: [], selected: true},
@@ -32,24 +35,11 @@ defmodule TodoAppWeb.TodoLive do
     </.form>
 
     <%= for todo <- @todos do %>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={todo.done}
-            phx-click="toggle_done"
-            phx-value-id={todo.id}
-          />
-          <span><%= todo.title %></span>
-        </label>
-        <button
-          type="button"
-          phx-click="delete"
-          phx-value-id={todo.id}
-        >
-          X
-        </button>
-      </div>
+      <.todo
+        todo={todo}
+        toggle_done_event="toggle_done"
+        delete_event="delete"
+      />
     <% end %>
 
     <button type="button" phx-click="clear">
