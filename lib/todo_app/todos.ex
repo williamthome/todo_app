@@ -36,7 +36,7 @@ defmodule TodoApp.Todos do
     from(
       t in Todo,
       where: ^clause,
-      order_by: [asc: t.done, asc: t.title]
+      order_by: [asc: t.done, asc: t.position]
     )
     |> Repo.all()
   end
