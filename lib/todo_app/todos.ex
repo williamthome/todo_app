@@ -23,6 +23,7 @@ defmodule TodoApp.Todos do
 
   @doc """
   Returns the list of sorted todos by done and then by title.
+
   Clause is optional.
 
   ## Examples
@@ -63,10 +64,10 @@ defmodule TodoApp.Todos do
 
   ## Examples
 
-      iex> get_todo!(123)
+      iex> get_todo(123)
       %Todo{}
 
-      iex> get_todo!(456)
+      iex> get_todo(456)
       nil
 
   """
