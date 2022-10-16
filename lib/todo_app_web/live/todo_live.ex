@@ -113,7 +113,7 @@ defmodule TodoAppWeb.TodoLive do
 
     IO.inspect(["drop", from, to])
 
-    {:noreply, socket}
+    {:reply, %{result: :ok}, socket}
   end
 
   defp fetch(socket) do
