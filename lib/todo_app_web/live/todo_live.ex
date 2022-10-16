@@ -37,7 +37,7 @@ defmodule TodoAppWeb.TodoLive do
 
     <div id="drag" phx-hook="Drag" class="todos">
       <%= for todo <- @todos do %>
-        <div data-id={todo.id} class="my-drag" draggable="true">
+        <div id={"holder-todo-#{todo.id}"} data-id={todo.id} class="my-drag" draggable="true">
           <div class="my-drop-area"></div>
           <div class="my-todo-holder">
             <.todo

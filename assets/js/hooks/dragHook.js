@@ -92,73 +92,175 @@ function dragFactory(eventHandler) {
     }
 }
 
-let dragElem = null
-let overElem = null
+let dragElements = []
+let dragElemIndex = -1
+let overElemIndex = -1
+let dropped = false
+// let dragElemHTML = null
+// let dragElemId = null
+// let overElemHTML = null
+// let overElemId = null
 // let overElemHTML = null
 // let overElemId = null
 
 export default dragFactory(
     /** @this HTMLElement */
     function (e) {
+        function elemIndex(elem) {
+            if (!elem || !elem.id) return -1
+            return dragElements.findIndex(({ id }) => id === elem.id)
+        }
+
         switch (e.name) {
             case "dragstart":
+                console.log("start")
+
+                for (const child of this.children) {
+                    dragElements.push(child.cloneNode(true))
+                }
+                const dragElem = e.draggable()
+                dragElemIndex = elemIndex(dragElem)
+
+                console.log("start", dragElemIndex)
+
                 this.classList.add("my-dragging")
-                dragElem = e.draggable()
                 dragElem.classList.add("my-drag-elem")
+                // dragElemId = dragElem.id
+
                 break
             case "dragend":
-                dragElem.classList.remove("my-drag-elem")
+                console.log("end")
+
+                // if (!dropped) {
+                //     document.getElementById(dragElements[dragElemIndex].id).getElementsByClassName("my-todo-holder")[0].innerHTML =
+                //         dragElements[dragElemIndex].getElementsByClassName("my-todo-holder")[0].innerHTML
+                //     if (overElemIndex > -1) {
+                //         document.getElementById(dragElements[overElemIndex].id).getElementsByClassName("my-todo-holder")[0].innerHTML =
+                //             dragElements[overElemIndex].getElementsByClassName("my-todo-holder")[0].innerHTML
+                //     }
+                // }
+
+                // this.classList.remove("my-dragging")
+                // dragElemIndex > -1 && document.getElementById(dragElements[dragElemIndex].id).classList.remove("my-drag-elem")
+                // overElemIndex > -1 && document.getElementById(dragElements[overElemIndex].id).classList.remove("drag-over")
+
+                // document.getElementById(dragElemId).classList.remove("my-drag-elem")
 
                 // overElemHTML = null
                 // overElemId = null
+
+                // dragElemId = null
+                // overElemId = null
+
                 this.classList.remove("my-dragging")
 
-                dragElem = null
-                overElem = null
+                if (dropped) {
+                    const dragElem = document.getElementById(dragElements[dragElemIndex].id)
+                    const dropElem = document.getElementById(dragElements[overElemIndex].id)
+                    dragElem.outerHTML = dragElements[overElemIndex].outerHTML
+                    dropElem.outerHTML = dragElements[dragElemIndex].outerHTML
+                } else {
+                    dragElemIndex > -1 && document.getElementById(dragElements[dragElemIndex].id).classList.remove("my-drag-elem")
+                    overElemIndex > -1 && document.getElementById(dragElements[overElemIndex].id).classList.remove("drag-over")
+                }
+
+                dragElemIndex = -1
+                overElemIndex = -1
+                dragElements.length = 0
+                dropped = false
 
                 break
             case "dragenter":
-                const enterElem = e.draggable()
-                const enterElemId = enterElem?.dataset?.id
-                if (enterElem && e.target.classList.contains("my-drop-area") && enterElemId !== dragElem.dataset.id && enterElemId !== overElem?.dataset.id) {
-                    overElem = enterElem.cloneNode(true)
-                    // overElemId = enterElemId
-                    enterElem.classList.add("drag-over")
-                    // console.log(overElemHTML)
-                    console.log(enterElemId, dragElem.dataset.id)
-                    const enterTodoHolder = enterElem.getElementsByClassName("my-todo-holder")[0]
-                    // overElemHTML = enterTodoHolder.innerHTML
-                    enterTodoHolder.innerHTML = dragElem.getElementsByClassName("my-todo-holder")[0].innerHTML
+                const enterDraggable = e.draggable()
+                const enterElemIndex = elemIndex(enterDraggable)
+                if (enterElemIndex > -1 && enterElemIndex !== dragElemIndex && enterElemIndex !== overElemIndex) {
+                    console.log("enter")
+                    enterDraggable.classList.add("drag-over")
+                    document.getElementById(dragElements[dragElemIndex].id).getElementsByClassName("my-todo-holder")[0].innerHTML =
+                        enterDraggable.getElementsByClassName("my-todo-holder")[0].innerHTML
+                    enterDraggable.getElementsByClassName("my-todo-holder")[0].innerHTML =
+                        dragElements[dragElemIndex].getElementsByClassName("my-todo-holder")[0].innerHTML
+                    overElemIndex = enterElemIndex
                 }
+
+                // if (!overElemId && e.target.classList.contains("my-drop-area")) {
+                //     const enterElem = e.draggable()
+                //     if (enterElem.id !== dragElemId) {
+                //         // overElemId = enterElemId
+                //         enterElem.classList.add("drag-over")
+                //         // console.log(overElemHTML)
+                //         const enterTodoHolder = enterElem.getElementsByClassName("my-todo-holder")[0]
+                //         // overElemHTML = enterTodoHolder.innerHTML
+                //         enterTodoHolder.innerHTML = document.getElementById(dragElemId).getElementsByClassName("my-todo-holder")[0].innerHTML
+                //         overElemId = enterElem.id
+                //     }
+                // }
                 break
             case "dragleave":
-                const leaveElem = e.draggable()
-                const leaveElemId = leaveElem?.dataset?.id
-                if (leaveElem && e.target.classList.contains("my-drop-area") && leaveElemId && overElem && leaveElemId === overElem.dataset.id) {
-                    console.log(overElem)
-                    leaveElem.classList.remove("drag-over")
-                    // console.log(overElemHTML)
-                    // console.log(leaveElemId, dragElem.dataset.id)
-                    const leaveTodoHolder = leaveElem.getElementsByClassName("my-todo-holder")[0]
-                    // console.log(overElemHTML)
-                    leaveTodoHolder.innerHTML = overElem.getElementsByClassName("my-todo-holder")[0].innerHTML
-                    // overElemId = null
-                    overElem = null
+                if (overElemIndex > -1 && e.target.classList.contains("my-drop-area")) {
+                    console.log("leave")
+
+                    const leaveDraggable = e.draggable()
+                    document.getElementById(dragElements[dragElemIndex].id).getElementsByClassName("my-todo-holder")[0].innerHTML =
+                        dragElements[dragElemIndex].getElementsByClassName("my-todo-holder")[0].innerHTML
+                    leaveDraggable.getElementsByClassName("my-todo-holder")[0].innerHTML =
+                        dragElements[overElemIndex].getElementsByClassName("my-todo-holder")[0].innerHTML
+
+                    leaveDraggable.classList.remove("drag-over")
+                    overElemIndex = -1
                 }
+                // if (overElemIndex > -1 && leaveElemIndex > -1 && leaveElemIndex === overElemIndex) {
+                //     const leaveDraggable = e.draggable()
+                //     console.log("leave")
+                //     overElemIndex = -1
+                // }
+
+                // if (overElemId && e.target.classList.contains("my-drop-area")) {
+                //     const leaveElem = e.draggable()
+                //     if (leaveElem.id !== dragElemId) {
+                //         leaveElem.classList.remove("drag-over")
+                //         const leaveTodoHolder = leaveElem.getElementsByClassName("my-todo-holder")[0]
+                //         leaveTodoHolder.innerHTML = document.getElementById(overElemId).getElementsByClassName("my-todo-holder")[0].innerHTML
+                //         overElemId = null
+                //     }
+                // }
+                // const leaveElem = e.draggable()
+                // const leaveElemId = leaveElem?.dataset?.id
+                // if (leaveElem && e.target.classList.contains("my-drop-area") && leaveElemId && overElem && leaveElemId === overElem.dataset.id) {
+                //     console.log(overElem)
+                //     leaveElem.classList.remove("drag-over")
+                //     // console.log(overElemHTML)
+                //     // console.log(leaveElemId, dragElem.dataset.id)
+                //     const leaveTodoHolder = leaveElem.getElementsByClassName("my-todo-holder")[0]
+                //     // console.log(overElemHTML)
+                //     leaveTodoHolder.innerHTML = overElem.getElementsByClassName("my-todo-holder")[0].innerHTML
+                //     // overElemId = null
+                //     overElem = null
+                // }
                 break
             case "drop":
-                for (const elem of this.getElementsByClassName("drag-over")) {
-                    elem.classList.remove("drag-over")
+                const dropDraggable = e.draggable()
+                const dropElemIndex = elemIndex(dropDraggable)
+                if (dropElemIndex !== dragElemIndex) {
+                    // dropDraggable.classList.remove("drag-over")
+                    console.log("drop")
+
+
+
+                    dropped = true
                 }
-                if (overElem && overElem.dataset.id !== dragElem.dataset.id) {
-                    // console.log(overElem.dataset.id)
-                    const overElemId = overElem.dataset.id
-                    overElem.dataset.id = dragElem.dataset.id
-                    console.log(overElem.dataset.id, dragElem.dataset.id)
-                    dragElem.dataset.id = overElemId
-                    dragElem.getElementsByClassName("my-todo-holder")[0].innerHTML = overElem.getElementsByClassName("my-todo-holder")[0].innerHTML
-                    console.log(overElem.dataset.id, dragElem.dataset.id)
-                }
+                // for (const elem of this.getElementsByClassName("drag-over")) {
+                //     elem.classList.remove("drag-over")
+                // }
+                // if (overElem && overElem.dataset.id !== dragElem.dataset.id) {
+                //     // console.log(overElem.dataset.id)
+                //     const overElemId = overElem.dataset.id
+                //     overElem.dataset.id = dragElem.dataset.id
+                //     console.log(overElem.dataset.id, dragElem.dataset.id)
+                //     dragElem.dataset.id = overElemId
+                //     dragElem.getElementsByClassName("my-todo-holder")[0].innerHTML = overElem.getElementsByClassName("my-todo-holder")[0].innerHTML
+                //     console.log(overElem.dataset.id, dragElem.dataset.id)
+                // }
                 // overElemHTML = null
                 // overElemId = null
                 // dragElem = null
