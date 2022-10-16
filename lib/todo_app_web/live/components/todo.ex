@@ -3,7 +3,12 @@ defmodule TodoAppWeb.Components.Todo do
 
   def todo(assigns) do
     ~H"""
-    <div>
+    <div
+      id={"todo-#{@todo.id}"}
+      data-id={@todo.id}
+      class="todo"
+    >
+      <pre><%= @todo.id %></pre>
       <label>
         <input
           type="checkbox"

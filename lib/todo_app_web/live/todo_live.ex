@@ -35,13 +35,20 @@ defmodule TodoAppWeb.TodoLive do
       <%= error_tag f, :title %>
     </.form>
 
-    <%= for todo <- @todos do %>
-      <.todo
-        todo={todo}
-        toggle_done_event="toggle_done"
-        delete_event="delete"
-      />
-    <% end %>
+    <div id="drag" phx-hook="Drag" class="todos">
+      <%= for todo <- @todos do %>
+        <div data-id={todo.id} class="my-drag" draggable="true">
+          <div class="my-drop-area"></div>
+          <div class="my-todo-holder">
+            <.todo
+              todo={todo}
+              toggle_done_event="toggle_done"
+              delete_event="delete"
+            />
+          </div>
+        </div>
+      <% end %>
+    </div>
 
     <button type="button" phx-click="clear">
       Clear Completed
@@ -96,6 +103,15 @@ defmodule TodoAppWeb.TodoLive do
     socket =
       socket
       |> clear_completed()
+
+    {:noreply, socket}
+  end
+
+  def handle_event("drop", %{"from" => from, "to" => to}, socket) do
+    {from, _} = :string.to_integer(from)
+    {to, _} = :string.to_integer(to)
+
+    IO.inspect(["drop", from, to])
 
     {:noreply, socket}
   end
