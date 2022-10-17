@@ -119,43 +119,17 @@
   100% { opacity: 0; }
 }
 
-/* .todo {
+/* TODO: Keep only app style in this file */
+
+.drag-wrapper {
   position: relative;
 }
 
-.todo.dragging {
+.dragging .drag-elem {
   opacity: 0.4;
 }
 
-.todo:not(.dragging).drop-area:after {
-  content:"";
-  border: 1px dashed #333;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-} */
-
-/* .todos .drop-area {
-  display: none;
-  background-color: red;
-}
-
-.todos.dragging .drop-area {
-  display: block;
-  height: 3rem;
-} */
-
-.my-drag {
-  position: relative;
-}
-
-.my-dragging .my-drag-elem {
-  opacity: 0.4;
-}
-
-.my-drop-area {
+.drop-area {
   display: none;
   background-color: #a94442;
   position: absolute;
@@ -164,42 +138,13 @@
   width: 100%;
   height: 100%;
   opacity: 0.4;
-  /* z-index: 1; */
-  /* pointer-events: none; */
 }
 
-/* .my-drop-area.drag-over {
-  background-color: #888;
-} */
-
-.my-dragging[data-done="true"] .my-drag[data-done="true"]:not(.my-drag-elem) .my-drop-area,
-.my-dragging[data-done="false"] .my-drag[data-done="false"]:not(.my-drag-elem) .my-drop-area {
+.dragging[data-done="true"] .drag-wrapper[data-done="true"]:not(.drag-elem) .drop-area,
+.dragging[data-done="false"] .drag-wrapper[data-done="false"]:not(.drag-elem) .drop-area {
   display: block;
 }
 
-.my-dragging {
-
-}
-
-.drag-over .my-drop-area {
+.drag-elem-hover .drop-area {
   background-color: #31708f;
 }
-
-
-/* .hold {
-  border: solid 5px #ccc;
-}
-
-.empty {
-  display: inline-block;
-  height: 160px;
-  width: 160px;
-  margin: 10px;
-  border: solid 3px salmon;
-  background: white;
-}
-
-.hovered {
-  background: #f4f4f4;
-  border-style: dashed;
-} */

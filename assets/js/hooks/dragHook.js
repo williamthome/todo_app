@@ -100,11 +100,11 @@ let dropped = false
 export default dragFactory(
     /** @this HTMLElement */
     function (e) {
-        const DRAG_CLASS = "my-drag-elem"
-        const DRAGGING_CLASS = "my-dragging"
-        const DRAGOVER_CLASS = "drag-over"
-        const DROPAREA_CLASS = "my-drop-area"
-        const HOLDER_CLASS = "my-todo-holder"
+        const DRAG_CLASS = "drag-elem"
+        const DRAGGING_CLASS = "dragging"
+        const DRAGOVER_CLASS = "drag-elem-hover"
+        const DROPAREA_CLASS = "drop-area"
+        const HOLDER_CLASS = "drag-content"
 
         function elemIndex(elem) {
             if (!elem || !elem.id) return -1
