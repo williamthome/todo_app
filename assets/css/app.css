@@ -172,7 +172,8 @@
   background-color: #888;
 } */
 
-.my-dragging .my-drag:not(.my-drag-elem) .my-drop-area {
+.my-dragging[data-done="true"] .my-drag[data-done="true"]:not(.my-drag-elem) .my-drop-area,
+.my-dragging[data-done="false"] .my-drag[data-done="false"]:not(.my-drag-elem) .my-drop-area {
   display: block;
 }
 

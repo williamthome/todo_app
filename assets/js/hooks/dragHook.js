@@ -111,12 +111,13 @@ export default dragFactory(
                     dragElements.push(child.cloneNode(true))
                 }
 
-                this.classList.add("my-dragging")
-
                 const dragElem = e.draggable()
                 dragElem.classList.add("my-drag-elem")
 
                 dragElemIndex = elemIndex(dragElem)
+
+                this.classList.add("my-dragging")
+                this.dataset.done = dragElem.dataset.done
                 break
             case "dragend":
                 function dragEnd() {
@@ -159,7 +160,13 @@ export default dragFactory(
             case "dragenter":
                 const enterDraggable = e.draggable()
                 const enterElemIndex = elemIndex(enterDraggable)
-                if (enterElemIndex > -1 && enterElemIndex !== dragElemIndex && enterElemIndex !== overElemIndex) {
+
+                if (
+                    enterElemIndex > -1 &&
+                    enterElemIndex !== dragElemIndex &&
+                    enterElemIndex !== overElemIndex &&
+                    enterDraggable.dataset.done === dragElements[dragElemIndex].dataset.done
+                ) {
                     enterDraggable.classList.add("drag-over")
 
                     document.getElementById(dragElements[dragElemIndex].id).getElementsByClassName("my-todo-holder")[0].innerHTML =
@@ -186,7 +193,11 @@ export default dragFactory(
             case "drop":
                 const dropDraggable = e.draggable()
                 const dropElemIndex = elemIndex(dropDraggable)
-                dropped = dropElemIndex !== dragElemIndex
+
+                dropped =
+                    dropDraggable &&
+                    dropElemIndex !== dragElemIndex &&
+                    dropDraggable.dataset.done === dragElements[dragElemIndex].dataset.done
                 break
     }
 })
