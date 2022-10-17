@@ -65,6 +65,14 @@ defmodule TodoAppWeb.TodoLive do
 
       <div class="todos-footer todo-holder card">
         <span>5 items left</span>
+        <div class="filters">
+          <%= for filter <- @filters do %>
+            <.filter
+              filter={filter}
+              filter_event="filter"
+            />
+          <% end %>
+        </div>
         <button type="button" phx-click="clear">
           Clear Completed
         </button>

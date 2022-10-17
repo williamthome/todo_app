@@ -10,7 +10,7 @@
   --check-background: linear-gradient(135deg, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
 
   /* Custom light vars */
-  --width: 30rem;
+  --width: 40rem;
   --font-family: "Josefin Sans";
   --font-size: 18px;
   --regular-weight: 400;
@@ -113,7 +113,7 @@ body {
 .container {
   padding: 0 var(--main-padding);
   margin: 0 auto;
-  width: var(--width);
+  max-width: var(--width);
 }
 
 button {
@@ -339,14 +339,8 @@ header h1 {
   height: var(--btn-icon-size);
 }
 
-.filters {
-  display: grid;
-  grid-auto-flow: column;
-  column-gap: var(--main-padding);
-  margin-top: var(--main-padding);
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--bold-weight);
+.card.filters {
+  display: none;
 }
 
 .filter.selected {
@@ -403,9 +397,28 @@ header h1 {
   opacity: 0.4;
 }
 
+/* MEDIA QUERIES
+   ---------------------------------*/
+
+@media only screen and (max-width: 600px) {
+  .filters {
+    display: none;
+  }
+
+  .card.filters {
+    display: grid;
+    grid-auto-flow: column;
+    column-gap: var(--main-padding);
+    margin-top: var(--main-padding);
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--bold-weight);
+  }
+}
+
 /* THEMES
    ---------------------------------*/
 
-   @media screen and (prefers-color-scheme: dark) {
-    /* TODO: Dark mode styles */
-  }
+@media screen and (prefers-color-scheme: dark) {
+  /* TODO: Dark mode styles */
+}
