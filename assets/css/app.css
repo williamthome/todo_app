@@ -118,3 +118,33 @@
   0% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+/* TODO: Keep only app style in this file */
+
+.drag-wrapper {
+  position: relative;
+}
+
+.dragging .drag-elem {
+  opacity: 0.4;
+}
+
+.drop-area {
+  display: none;
+  background-color: #a94442;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+}
+
+.dragging[data-done="true"] .drag-wrapper[data-done="true"]:not(.drag-elem) .drop-area,
+.dragging[data-done="false"] .drag-wrapper[data-done="false"]:not(.drag-elem) .drop-area {
+  display: block;
+}
+
+.drag-elem-hover .drop-area {
+  background-color: #31708f;
+}
