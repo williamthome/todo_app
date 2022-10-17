@@ -5,26 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="csrf-token" content={csrf_token_value()}>
-    <.live_title prefix="Todos – "><%= assigns[:page_title] || "Welcome" %></.live_title>
+    <.live_title prefix="Todos U+002d "><%= assigns[:page_title] || "Welcome" %></.live_title>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
   <body>
-    <header>
-      <section class="container">
-        <nav>
-          <ul>
-            <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-            <% end %>
-          </ul>
-        </nav>
-        <a href="https://phoenixframework.org/" class="phx-logo">
-          <img src={Routes.static_path(@conn, "/images/phoenix.png")} alt="Phoenix Framework Logo"/>
-        </a>
-      </section>
-    </header>
-    <%= @inner_content %>
+    <div class="container">
+      <header>
+        <h1>TODO</h1>
+        <button
+          id="themeBtn"
+          class="icon-btn"
+          type="button"
+        >
+          <%!-- TODO: Icon by theme --%>
+          <img class="theme-icon theme-icon--light" src="/images/icon-moon.svg"/>
+          <%!-- <img class="theme-icon theme-icon--dark" src="/images/icon-sun.svg"/> --%>
+        </button>
+      </header>
+      <%= @inner_content %>
+    </div>
   </body>
 </html>

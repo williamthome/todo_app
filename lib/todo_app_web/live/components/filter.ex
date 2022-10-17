@@ -5,11 +5,11 @@ defmodule TodoAppWeb.Components.Filter do
     ~H"""
     <button
       type="button"
+      class={"filter #{if Map.get(@filter, :selected), do: "selected"}"}
       phx-click={@filter_event}
       phx-value-name={@filter.name}
     >
       <%= @filter.label %>
-      <%= if Map.get(@filter, :selected), do: "(Selected)" %>
     </button>
     """
   end

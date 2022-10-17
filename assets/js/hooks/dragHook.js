@@ -100,11 +100,11 @@ let dropped = false
 export default dragFactory(
     /** @this HTMLElement */
     function (e) {
-        const DRAG_CLASS = "drag-elem"
+        const DRAG_ELEM_CLASS = "drag-elem"
         const DRAGGING_CLASS = "dragging"
-        const DRAGOVER_CLASS = "drag-elem-hover"
-        const DROPAREA_CLASS = "drop-area"
-        const HOLDER_CLASS = "drag-content"
+        const DRAG_HOVER_CLASS = "drag-elem-hover"
+        const DROP_AREA_CLASS = "drop-area"
+        const DRAG_CONTENT_CLASS = "drag-content"
 
         function elemIndex(elem) {
             if (!elem || !elem.id) return -1
@@ -112,7 +112,8 @@ export default dragFactory(
         }
 
         function getElem(index) {
-            return document.getElementById(dragElements[index].id)
+            const elem = dragElements[index]
+            return elem ? document.getElementById(elem.id) : undefined
         }
 
         function getDragElem() {
@@ -124,7 +125,7 @@ export default dragFactory(
         }
 
         function getHolder(elem) {
-            return elem.getElementsByClassName(HOLDER_CLASS)[0]
+            return elem.getElementsByClassName(DRAG_CONTENT_CLASS)[0]
         }
 
         function swapInnerContent(from, to) {
@@ -138,7 +139,7 @@ export default dragFactory(
                 }
 
                 const dragElem = e.draggable()
-                dragElem.classList.add(DRAG_CLASS)
+                dragElem.classList.add(DRAG_ELEM_CLASS)
                 dragElemIndex = elemIndex(dragElem)
 
                 this.classList.add(DRAGGING_CLASS)
@@ -151,6 +152,7 @@ export default dragFactory(
                     overElemIndex = -1
                     dragElements.length = 0
                     dropped = false
+                    delete this.dataset.done
                 }
                 const doDragEnd = dragEnd.bind(this)
 
@@ -176,8 +178,8 @@ export default dragFactory(
                         doDragEnd()
                     })
                 } else {
-                    dragElemIndex > -1 && getDragElem().classList.remove(DRAG_CLASS)
-                    overElemIndex > -1 && getOverElem().classList.remove(DRAGOVER_CLASS)
+                    dragElemIndex > -1 && getDragElem().classList.remove(DRAG_ELEM_CLASS)
+                    overElemIndex > -1 && getOverElem().classList.remove(DRAG_HOVER_CLASS)
                     doDragEnd()
                 }
                 break
@@ -191,23 +193,35 @@ export default dragFactory(
                     enterElemIndex !== overElemIndex &&
                     enterDraggable.dataset.done === dragElements[dragElemIndex].dataset.done
                 ) {
-                    enterDraggable.classList.add(DRAGOVER_CLASS)
-
-                    swapInnerContent(getDragElem(), enterDraggable)
+                    swapInnerContent(getDragElem(), dragElements[enterElemIndex])
                     swapInnerContent(enterDraggable, dragElements[dragElemIndex])
 
+                    enterDraggable.classList.add(DRAG_HOVER_CLASS)
+
                     overElemIndex = enterElemIndex
+                } else if (
+                    overElemIndex > -1 &&
+                    enterElemIndex === dragElemIndex
+                ) {
+                    swapInnerContent(getDragElem(), dragElements[dragElemIndex])
+                    swapInnerContent(enterDraggable, dragElements[overElemIndex])
+
+                    overElemIndex = -1
                 }
                 break
             case "dragleave":
-                if (overElemIndex > -1 && e.target.classList.contains(DROPAREA_CLASS)) {
+                if (e.target.classList.contains(DROP_AREA_CLASS)) {
                     const leaveDraggable = e.draggable()
-                    leaveDraggable.classList.remove(DRAGOVER_CLASS)
+                    const leaveElemIndex = elemIndex(leaveDraggable)
 
-                    swapInnerContent(getDragElem(), dragElements[dragElemIndex])
-                    swapInnerContent(leaveDraggable, dragElements[overElemIndex])
+                    if (leaveElemIndex !== dragElemIndex) {
+                        leaveDraggable.classList.remove(DRAG_HOVER_CLASS)
 
-                    overElemIndex = -1
+                        swapInnerContent(getDragElem(), dragElements[dragElemIndex])
+                        swapInnerContent(leaveDraggable, dragElements[leaveElemIndex])
+
+                        overElemIndex = -1
+                    }
                 }
                 break
             case "drop":

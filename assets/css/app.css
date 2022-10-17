@@ -1,125 +1,357 @@
-/* This file is for your main application CSS */
+@import "./font.css";
 @import "./phoenix.css";
 
-/* Alerts and form errors used by phx.new */
-.alert {
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-}
-.alert-info {
-  color: #31708f;
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-}
-.alert-warning {
-  color: #8a6d3b;
-  background-color: #fcf8e3;
-  border-color: #faebcc;
-}
-.alert-danger {
-  color: #a94442;
-  background-color: #f2dede;
-  border-color: #ebccd1;
-}
-.alert p {
-  margin-bottom: 0;
-}
-.alert:empty {
-  display: none;
-}
-.invalid-feedback {
-  color: #a94442;
-  display: block;
-  margin: -1rem 0 2rem;
+/* ROOT
+   ---------------------------------*/
+
+:root {
+  /* Challenge vars */
+  --bright-blue: hsl(220, 98%, 61%);
+  --check-background: linear-gradient(135deg, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+
+  /* Custom light vars */
+  --width: 30rem;
+  --font-family: "Josefin Sans";
+  --font-size: 18px;
+  --regular-weight: 400;
+  --bold-weight: 700;
+  --checkbox-size: 1.5rem;
+  --checkbox-anim-time: 0.1s;
+  --check-icon: url("/images/icon-check.svg");
+  --border-radius: 0.5rem;
+  --main-padding: 1.25rem;
+  --card-height: calc(var(--main-padding) * 2 + var(--checkbox-size));
+  --completed-todo-color: var(--secondary-color);
+  --btn-hover-color: var(--todo-color);
+  --btn-icon-size: 1rem;
+  --shadow-elev-1: rgba(0, 0, 0, 0.2) 0px 18px 50px -10px;
 }
 
-/* LiveView specific classes for your customization */
-.phx-no-feedback.invalid-feedback,
-.phx-no-feedback .invalid-feedback {
-  display: none;
+:root:not(.dark-theme) {
+  /* Challenge light vars */
+  --very-light-gray: hsl(0, 0%, 98%);
+  --very-light-grayish-blue: hsl(236, 33%, 92%);
+  --light-grayish-blue: hsl(233, 11%, 84%);
+  --dark-grayish-blue: hsl(236, 9%, 61%);
+  --very-dark-grayish-blue: hsl(235, 19%, 35%);
+
+  /* Custom light vars */
+  --primary-color: var(--very-dark-grayish-blue);
+  --secondary-color: var(--dark-grayish-blue);
+  --top-image:
+    url("/images/bg-desktop-light.jpg"),
+    url("/images/bg-desktop-light-flipped.jpg");
+  --body-bg: var(--very-light-gray);
+  --card-bg: white;
+  --todo-color: var(--primary-color);
+  --border-color: var(--light-grayish-blue);
+  --btn-color: var(--secondary-color);
+  --input-color: var(--todo-color);
+  --selected-filter-color: var(--bright-blue);
 }
 
-.phx-click-loading {
-  opacity: 0.5;
-  transition: opacity 1s ease-out;
+:root.dark-theme {
+  /* Challenge dark vars */
+  --very-dark-blue: hsl(235, 21%, 11%);
+  --very-dark-desaturated-blue: hsl(235, 24%, 19%);
+  --light-grayish-blue: hsl(234, 39%, 85%);
+  --light-grayish-blue-hover: hsl(236, 33%, 92%);
+  --dark-grayish-blue: hsl(234, 11%, 52%);
+  --very-dark-grayish-blue: hsl(233, 14%, 35%);
+  /* --very-dark-grayish-blue: hsl(237, 14%, 26%); */
+
+  /* Custom dark vars */
+  --primary-color: var(--light-grayish-blue);
+  --secondary-color: var(--dark-grayish-blue);
+  --top-image:
+    url("/images/bg-desktop-dark.jpg"),
+    url("/images/bg-desktop-dark-flipped.jpg");
+  --body-bg: var(--very-dark-blue);
+  --card-bg: var(--very-dark-desaturated-blue);
+  --todo-color: var(--primary-color);
+  --border-color: var(--very-dark-grayish-blue);
+  --btn-color: var(--secondary-color);
+  --input-color: var(--primary-color);
+  --selected-filter-color: var(--bright-blue);
 }
 
-.phx-loading{
-  cursor: wait;
+/* GENERAL SETUP
+   ---------------------------------*/
+
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
 }
 
-.phx-modal {
-  opacity: 1!important;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
+html {
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  font-weight: var(--regular-weight);
+}
+
+html,
+body {
   height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.4);
 }
 
-.phx-modal-content {
-  background-color: #fefefe;
-  margin: 15vh auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
+body {
+  background-image: var(--top-image);
+  background-position: center top;
+  background-repeat: no-repeat, repeat-x;
+  background-color: var(--body-bg);
+  color: var(--todo-color);
+  margin: 0;
 }
 
-.phx-modal-close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
+.container {
+  padding: 0 var(--main-padding);
+  margin: 0 auto;
+  width: var(--width);
 }
 
-.phx-modal-close:hover,
-.phx-modal-close:focus {
-  color: black;
-  text-decoration: none;
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--btn-color);
+}
+
+button:hover {
+  color: var(--btn-hover-color);
+}
+
+button svg {
+  pointer-events: none;
+}
+
+button,
+input {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+label {
+  display: flex;
+  align-items: center;
+}
+
+label:hover {
   cursor: pointer;
 }
 
-.fade-in-scale {
-  animation: 0.2s ease-in 0s normal forwards 1 fade-in-scale-keys;
+/* COMPONENTS
+   ---------------------------------*/
+
+/* CHECKBOX COMPONENT */
+
+.checkbox-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 1;
 }
 
-.fade-out-scale {
-  animation: 0.2s ease-out 0s normal forwards 1 fade-out-scale-keys;
+.checkbox-icon {
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
 }
 
-.fade-in {
-  animation: 0.2s ease-out 0s normal forwards 1 fade-in-keys;
-}
-.fade-out {
-  animation: 0.2s ease-out 0s normal forwards 1 fade-out-keys;
-}
-
-@keyframes fade-in-scale-keys{
-  0% { scale: 0.95; opacity: 0; }
-  100% { scale: 1.0; opacity: 1; }
+.checkbox-input {
+  position: absolute;
+  appearance: none;
+  border-radius: 50%;
+  border: 1px var(--border-color) solid;
+  margin: 0;
 }
 
-@keyframes fade-out-scale-keys{
-  0% { scale: 1.0; opacity: 1; }
-  100% { scale: 0.95; opacity: 0; }
+.checkbox-input:hover {
+  background:
+    linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+    var(--check-background) border-box;
+  border: 1px solid transparent;
 }
 
-@keyframes fade-in-keys{
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+.checkbox-input+label {
+  z-index: 1;
+  background-position: center top;
+  transition: background-position var(--checkbox-anim-time);
+  overflow: hidden;
 }
 
-@keyframes fade-out-keys{
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+.checkbox-input+label+label {
+  margin-left: var(--main-padding);
 }
 
-/* TODO: Keep only app style in this file */
+.checkbox-input:checked {
+  border: none;
+  background-image: var(--check-background);
+}
+
+.checkbox-input:checked+label {
+  background: var(--check-icon) no-repeat center center;
+}
+
+.checkbox-input:checked+label+label {
+  text-decoration: line-through;
+  color: var(--completed-todo-color);
+}
+
+/* MAIN CLASSES
+   ---------------------------------*/
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(var(--main-padding) * 2.5) 0;
+}
+
+header h1 {
+  letter-spacing: 0.75rem;
+  margin: 0;
+  color: white;
+}
+
+.card {
+  background-color: var(--card-bg);
+}
+
+.elevated {
+  box-shadow: var(--shadow-elev-1);
+}
+
+.rounded-border {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+#themeBtn {
+  position: relative;
+}
+
+#themeBtn .theme-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+}
+
+.todo-holder {
+  height: var(--card-height);
+  position: relative;
+}
+
+#todo_form {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  padding-left: var(--main-padding);
+  margin-bottom: var(--main-padding);
+}
+
+#todo_form #todo_form_title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: inherit;
+  padding-left: calc(var(--main-padding) * 2 + var(--checkbox-size));
+  padding-right: var(--main-padding);
+  background-color: inherit;
+  color: var(--input-color);
+}
+
+.todos-holder {
+  max-height: 25rem;
+  overflow-y: auto;
+}
+
+.todos .drag-wrapper:not(:first-child),
+.todos-footer {
+  box-sizing: content-box;
+  border-top: 1px var(--border-color) solid;
+}
+
+.todos .drag-wrapper:first-child {
+  border-top-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.todos-footer {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--main-padding);
+  color: var(--btn-color);
+}
+
+.todo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 0 var(--main-padding);
+}
+
+.todo .checkbox-label {
+  flex-grow: 1;
+  height: 100%;
+}
+
+.todo .actions {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+}
+
+.todo .delete-btn {
+  visibility: hidden;
+}
+
+.todo:hover .delete-btn {
+  visibility: visible;
+}
+
+.todo .delete-btn svg path {
+  fill: var(--btn-color);
+}
+
+.todo .delete-btn:hover svg path {
+  fill: var(--btn-hover-color);
+}
+
+.todo .btn-icon {
+  width: var(--btn-icon-size);
+  height: var(--btn-icon-size);
+}
+
+.filters {
+  display: grid;
+  grid-auto-flow: column;
+  column-gap: var(--main-padding);
+  margin-top: var(--main-padding);
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--bold-weight);
+}
+
+.filter.selected {
+  color: var(--selected-filter-color);
+}
+
+.filter.selected:hover {
+  cursor: default;
+  color: var(--selected-filter-color);
+}
+
+.hint {
+  padding: calc(var(--main-padding)  * 2.5) 0;
+  text-align: center;
+  color: var(--secondary-color);
+}
 
 .drag-wrapper {
   position: relative;
@@ -131,20 +363,33 @@
 
 .drop-area {
   display: none;
-  background-color: #a94442;
   position: absolute;
-  top: 0;
+  top: 50%;
   left: 0;
+  transform: translateY(-50%);
   width: 100%;
   height: 100%;
-  opacity: 0.4;
-}
-
-.dragging[data-done="true"] .drag-wrapper[data-done="true"]:not(.drag-elem) .drop-area,
-.dragging[data-done="false"] .drag-wrapper[data-done="false"]:not(.drag-elem) .drop-area {
-  display: block;
+  z-index: 2;
+  opacity: 0;
 }
 
 .drag-elem-hover .drop-area {
-  background-color: #31708f;
+  display: block;
 }
+
+.dragging[data-done="true"] .drag-wrapper[data-done="true"]:not(.drag-elem),
+.dragging[data-done="false"] .drag-wrapper[data-done="false"]:not(.drag-elem) {
+  border: 2px dashed var(--primary-color);
+}
+
+.drag-elem-hover .todo {
+  background-color: var(--border-color);
+  opacity: 0.4;
+}
+
+/* THEMES
+   ---------------------------------*/
+
+   @media screen and (prefers-color-scheme: dark) {
+    /* TODO: Dark mode styles */
+  }

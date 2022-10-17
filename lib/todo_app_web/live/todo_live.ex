@@ -26,41 +26,51 @@ defmodule TodoAppWeb.TodoLive do
   def render(assigns) do
     ~H"""
     <.form
+      id="todo_form"
+      class="todo-holder card rounded-border"
       :let={f}
       for={@changeset}
       phx-submit="create"
     >
-      <%= checkbox f, :done %>
+      <div class="checkbox-container">
+        <%= checkbox f, :done, class: "checkbox-input checkbox-icon" %>
+        <%= label f, :done, "", class: "checkbox-icon" %>
+      </div>
+
       <%= text_input f, :title, placeholder: "Create a new todo.." %>
-      <%= error_tag f, :title %>
     </.form>
 
-    <div id="drag" phx-hook="Drag" class="todos">
-      <%= for todo <- @todos do %>
-        <div
-          id={"todo-#{todo.id}-holder"}
-          data-id={todo.id}
-          data-done={to_string(todo.done)}
-          class="drag-wrapper"
-          draggable="true"
-        >
-          <div class="drop-area"></div>
-          <div class="drag-content">
-            <.todo
-              todo={todo}
-              toggle_done_event="toggle_done"
-              delete_event="delete"
-            />
+    <div class="todos card rounded-border elevated">
+      <div id="drag" phx-hook="Drag" class="todos todos-holder">
+        <%= for todo <- @todos do %>
+          <div
+            id={"todo-#{todo.id}-holder"}
+            data-id={todo.id}
+            data-done={to_string(todo.done)}
+            class="drag-wrapper"
+            draggable="true"
+          >
+            <div class="drop-area"></div>
+            <div class="drag-content">
+              <.todo
+                todo={todo}
+                toggle_done_event="toggle_done"
+                delete_event="delete"
+              />
+            </div>
           </div>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
+
+      <div class="todos-footer todo-holder card">
+        <span>5 items left</span>
+        <button type="button" phx-click="clear">
+          Clear Completed
+        </button>
+      </div>
     </div>
 
-    <button type="button" phx-click="clear">
-      Clear Completed
-    </button>
-
-    <div>
+    <div class="filters todo-holder card rounded-border elevated">
       <%= for filter <- @filters do %>
         <.filter
           filter={filter}
@@ -69,7 +79,7 @@ defmodule TodoAppWeb.TodoLive do
       <% end %>
     </div>
 
-    There is <%= Enum.count(@todos) %> todos.
+    <div class="hint">Drag and drop to reorder list</div>
     """
   end
 
