@@ -26,6 +26,8 @@
   --btn-icon-size: 1rem;
   --shadow-elev-1: rgba(0, 0, 0, 0.2) 0px 18px 50px -10px;
   --title-size: 2rem;
+  --transition-duration: 100ms;
+  --transition-function: ease-in;
 }
 
 :root:not(.dark-theme) {
@@ -105,6 +107,7 @@ body {
   background-color: var(--body-bg);
   color: var(--todo-color);
   margin: 0;
+  transition: all var(--transition-duration) var(--transition-function);
 }
 
 .container {
@@ -118,6 +121,7 @@ button {
   border: none;
   cursor: pointer;
   color: var(--btn-color);
+  transition: color var(--transition-duration) var(--transition-function);
 }
 
 button:hover {
@@ -168,6 +172,7 @@ label:hover {
   border-radius: 50%;
   border: 1px var(--border-color) solid;
   margin: 0;
+  transition: all var(--transition-duration) var(--transition-function);
 }
 
 .checkbox-input:hover {
@@ -238,6 +243,7 @@ header h1 {
   background-repeat: no-repeat, no-repeat;
   width: var(--title-size);
   height: var(--title-size);
+  transition: background-image var(--transition-duration) var(--transition-function);
 }
 
 .todo-holder {
@@ -264,6 +270,7 @@ header h1 {
   padding-right: var(--main-padding);
   background-color: inherit;
   color: var(--input-color);
+  outline-color: var(--primary-color);
 }
 
 .todos-holder {
@@ -310,10 +317,13 @@ header h1 {
 
 .todo .delete-btn {
   visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--transition-duration) var(--transition-function);
 }
 
 .todo:hover .delete-btn {
   visibility: visible;
+  opacity: 1;
 }
 
 .todo .delete-btn svg path {
