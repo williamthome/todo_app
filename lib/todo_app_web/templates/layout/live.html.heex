@@ -1,9 +1,18 @@
-<p class="alert alert-info" role="alert"
-  phx-click="lv:clear-flash"
-  phx-value-key="info"><%= live_flash(@flash, :info) %></p>
+<div class="container">
+  <header>
+    <h1>TODO</h1>
+    <button id="theme_btn" type="button" phx-click="toggle_theme"></button>
+  </header>
 
-<p class="alert alert-danger" role="alert"
-  phx-click="lv:clear-flash"
-  phx-value-key="error"><%= live_flash(@flash, :error) %></p>
+  <main>
+    <p class="alert alert-info" role="alert"
+      phx-click="lv:clear-flash"
+      phx-value-key="info"><%= live_flash(@flash, :info) %></p>
 
-<%= @inner_content %>
+    <p class="alert alert-danger" role="alert"
+      phx-click="lv:clear-flash"
+      phx-value-key="error"><%= live_flash(@flash, :error) %></p>
+
+    <%= @inner_content %>
+  </main>
+</div>

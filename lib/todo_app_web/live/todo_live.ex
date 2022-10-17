@@ -16,6 +16,7 @@ defmodule TodoAppWeb.TodoLive do
   def mount(_args, _session, socket) do
     socket =
       socket
+      |> assign(theme: :light)
       |> assign(filters: @filters)
       |> changeset()
       |> fetch()
@@ -83,6 +84,15 @@ defmodule TodoAppWeb.TodoLive do
     """
   end
 
+  def handle_event("toggle_theme", %{}, socket) do
+    socket =
+      socket
+      |> toggle_theme()
+      |> push_event("toggle-theme", %{})
+
+    {:noreply, socket}
+  end
+
   def handle_event("create", %{"todo" => attrs}, socket) do
     socket =
       socket
@@ -137,6 +147,17 @@ defmodule TodoAppWeb.TodoLive do
       end
 
     {:reply, reply, socket}
+  end
+
+  defp toggle_theme(socket) do
+    theme =
+      case socket.assigns.theme do
+        :light -> :dark
+        :dark -> :light
+      end
+
+    socket
+    |> assign(theme: theme)
   end
 
   defp fetch(socket) do

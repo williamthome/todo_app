@@ -25,6 +25,7 @@
   --btn-hover-color: var(--todo-color);
   --btn-icon-size: 1rem;
   --shadow-elev-1: rgba(0, 0, 0, 0.2) 0px 18px 50px -10px;
+  --title-size: 2rem;
 }
 
 :root:not(.dark-theme) {
@@ -41,6 +42,7 @@
   --top-image:
     url("/images/bg-desktop-light.jpg"),
     url("/images/bg-desktop-light-flipped.jpg");
+  --theme-icon: url("/images/icon-moon.svg");
   --body-bg: var(--very-light-gray);
   --card-bg: white;
   --todo-color: var(--primary-color);
@@ -66,6 +68,7 @@
   --top-image:
     url("/images/bg-desktop-dark.jpg"),
     url("/images/bg-desktop-dark-flipped.jpg");
+  --theme-icon: url("/images/icon-sun.svg");
   --body-bg: var(--very-dark-blue);
   --card-bg: var(--very-dark-desaturated-blue);
   --todo-color: var(--primary-color);
@@ -210,6 +213,7 @@ header {
 }
 
 header h1 {
+  font-size: var(--title-size);
   letter-spacing: 0.75rem;
   margin: 0;
   color: white;
@@ -228,15 +232,12 @@ header h1 {
   overflow: hidden;
 }
 
-#themeBtn {
-  position: relative;
-}
-
-#themeBtn .theme-icon {
-  position: absolute;
-  left: 0;
-  top: 0;
-  transform: translate(-50%, -50%);
+#theme_btn {
+  background-image: var(--theme-icon);
+  background-position: center top;
+  background-repeat: no-repeat, no-repeat;
+  width: var(--title-size);
+  height: var(--title-size);
 }
 
 .todo-holder {

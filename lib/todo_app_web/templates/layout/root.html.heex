@@ -10,20 +10,6 @@
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
   <body>
-    <div class="container">
-      <header>
-        <h1>TODO</h1>
-        <button
-          id="themeBtn"
-          class="icon-btn"
-          type="button"
-        >
-          <%!-- TODO: Icon by theme --%>
-          <img class="theme-icon theme-icon--light" src="/images/icon-moon.svg"/>
-          <%!-- <img class="theme-icon theme-icon--dark" src="/images/icon-sun.svg"/> --%>
-        </button>
-      </header>
-      <%= @inner_content %>
-    </div>
+    <%= @inner_content %>
   </body>
 </html>
