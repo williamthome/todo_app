@@ -136,6 +136,46 @@ defmodule TodoApp.Todos do
   end
 
   @doc """
+  Updates todos position.
+
+  ## Examples
+
+      iex> update_position(0, 2)
+      {:ok, :ok}
+
+      iex> update_todo(-1, -1)
+      {:error, any()}
+
+  """
+  def update_position(from_id, to_id) do
+    result = Repo.transaction(fn ->
+      [from_todo, to_todo] =
+        from(
+          t in Todo,
+          where: t.id in [^from_id, ^to_id],
+          order_by: [desc: t.id == ^from_id, desc: t.id == ^to_id]
+        )
+        |> Repo.all()
+
+      from_position = from_todo.position
+      to_position = to_todo.position
+
+      from_changeset = change_todo(from_todo, %{position: to_position})
+      Repo.update!(from_changeset)
+
+      to_changeset = change_todo(to_todo, %{position: from_position})
+      Repo.update!(to_changeset)
+
+      :ok
+    end)
+
+    case result do
+      {:ok, :ok} -> :ok
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
   Deletes a todo.
 
   ## Examples

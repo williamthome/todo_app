@@ -111,9 +111,16 @@ defmodule TodoAppWeb.TodoLive do
     {from, _} = :string.to_integer(from)
     {to, _} = :string.to_integer(to)
 
-    IO.inspect(["drop", from, to])
+    reply =
+      case Todos.update_position(from, to) do
+        :ok ->
+          %{result: :ok}
+        {:error, reason} ->
+          IO.inspect({:error, reason})
+          %{result: :error, reason: "Something bad happened :("}
+      end
 
-    {:reply, %{result: :ok}, socket}
+    {:reply, reply, socket}
   end
 
   defp fetch(socket) do
