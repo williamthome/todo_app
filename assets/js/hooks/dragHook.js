@@ -132,6 +132,8 @@ export default dragFactory(
             getHolder(from).innerHTML = getHolder(to).innerHTML
         }
 
+        e.dataTransfer.dropEffect = "move"
+
         switch (e.name) {
             case "dragstart":
                 for (const child of this.children) {
