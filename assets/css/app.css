@@ -384,13 +384,18 @@ header h1 {
   opacity: 0;
 }
 
-.drag-elem-hover .drop-area {
-  display: block;
-}
-
 .dragging[data-done="true"] .drag-wrapper[data-done="true"]:not(.drag-elem),
 .dragging[data-done="false"] .drag-wrapper[data-done="false"]:not(.drag-elem) {
-  border: 2px dashed var(--primary-color);
+  border-left: 2px dashed var(--primary-color);
+}
+
+.dragging[data-done="true"] .drag-wrapper[data-done="true"].drag-elem,
+.dragging[data-done="false"] .drag-wrapper[data-done="false"].drag-elem {
+  border-left: 2px dashed var(--secondary-color);
+}
+
+.drag-elem-hover .drop-area {
+  display: block;
 }
 
 .drag-elem-hover .todo {
