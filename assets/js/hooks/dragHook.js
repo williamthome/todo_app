@@ -100,9 +100,35 @@ let dropped = false
 export default dragFactory(
     /** @this HTMLElement */
     function (e) {
+        const DRAG_CLASS = "my-drag-elem"
+        const DRAGGING_CLASS = "my-dragging"
+        const DRAGOVER_CLASS = "drag-over"
+        const DROPAREA_CLASS = "my-drop-area"
+        const HOLDER_CLASS = "my-todo-holder"
+
         function elemIndex(elem) {
             if (!elem || !elem.id) return -1
             return dragElements.findIndex(({ id }) => id === elem.id)
+        }
+
+        function getElem(index) {
+            return document.getElementById(dragElements[index].id)
+        }
+
+        function getDragElem() {
+            return getElem(dragElemIndex)
+        }
+
+        function getOverElem() {
+            return getElem(overElemIndex)
+        }
+
+        function getHolder(elem) {
+            return elem.getElementsByClassName(HOLDER_CLASS)[0]
+        }
+
+        function swapInnerContent(from, to) {
+            getHolder(from).innerHTML = getHolder(to).innerHTML
         }
 
         switch (e.name) {
@@ -112,16 +138,15 @@ export default dragFactory(
                 }
 
                 const dragElem = e.draggable()
-                dragElem.classList.add("my-drag-elem")
-
+                dragElem.classList.add(DRAG_CLASS)
                 dragElemIndex = elemIndex(dragElem)
 
-                this.classList.add("my-dragging")
+                this.classList.add(DRAGGING_CLASS)
                 this.dataset.done = dragElem.dataset.done
                 break
             case "dragend":
                 function dragEnd() {
-                    this.classList.remove("my-dragging")
+                    this.classList.remove(DRAGGING_CLASS)
                     dragElemIndex = -1
                     overElemIndex = -1
                     dragElements.length = 0
@@ -130,8 +155,8 @@ export default dragFactory(
                 const doDragEnd = dragEnd.bind(this)
 
                 if (dropped) {
-                    const dragElem = document.getElementById(dragElements[dragElemIndex].id)
-                    const dropElem = document.getElementById(dragElements[overElemIndex].id)
+                    const dragElem = getDragElem()
+                    const dropElem = getOverElem()
 
                     const from = dragElem.dataset.id
                     const to = dropElem.dataset.id
@@ -139,21 +164,20 @@ export default dragFactory(
                     e.hook.pushEvent("drop", {from, to}, function(reply) {
                         switch(reply.result) {
                             case "ok":
-                                console.log("ok", from, to)
                                 dragElem.outerHTML = dragElements[overElemIndex].outerHTML
                                 dropElem.outerHTML = dragElements[dragElemIndex].outerHTML
                                 break
                             case "error":
-                                console.log("error", from, to, reply.reason)
                                 dragElem.outerHTML = dragElements[dragElemIndex].outerHTML
                                 dropElem.outerHTML = dragElements[overElemIndex].outerHTML
+                                alert(reply.reason)
                                 break
                         }
                         doDragEnd()
                     })
                 } else {
-                    dragElemIndex > -1 && document.getElementById(dragElements[dragElemIndex].id).classList.remove("my-drag-elem")
-                    overElemIndex > -1 && document.getElementById(dragElements[overElemIndex].id).classList.remove("drag-over")
+                    dragElemIndex > -1 && getDragElem().classList.remove(DRAG_CLASS)
+                    overElemIndex > -1 && getOverElem().classList.remove(DRAGOVER_CLASS)
                     doDragEnd()
                 }
                 break
@@ -167,25 +191,21 @@ export default dragFactory(
                     enterElemIndex !== overElemIndex &&
                     enterDraggable.dataset.done === dragElements[dragElemIndex].dataset.done
                 ) {
-                    enterDraggable.classList.add("drag-over")
+                    enterDraggable.classList.add(DRAGOVER_CLASS)
 
-                    document.getElementById(dragElements[dragElemIndex].id).getElementsByClassName("my-todo-holder")[0].innerHTML =
-                        enterDraggable.getElementsByClassName("my-todo-holder")[0].innerHTML
-                    enterDraggable.getElementsByClassName("my-todo-holder")[0].innerHTML =
-                        dragElements[dragElemIndex].getElementsByClassName("my-todo-holder")[0].innerHTML
+                    swapInnerContent(getDragElem(), enterDraggable)
+                    swapInnerContent(enterDraggable, dragElements[dragElemIndex])
 
                     overElemIndex = enterElemIndex
                 }
                 break
             case "dragleave":
-                if (overElemIndex > -1 && e.target.classList.contains("my-drop-area")) {
+                if (overElemIndex > -1 && e.target.classList.contains(DROPAREA_CLASS)) {
                     const leaveDraggable = e.draggable()
-                    leaveDraggable.classList.remove("drag-over")
+                    leaveDraggable.classList.remove(DRAGOVER_CLASS)
 
-                    document.getElementById(dragElements[dragElemIndex].id).getElementsByClassName("my-todo-holder")[0].innerHTML =
-                        dragElements[dragElemIndex].getElementsByClassName("my-todo-holder")[0].innerHTML
-                    leaveDraggable.getElementsByClassName("my-todo-holder")[0].innerHTML =
-                        dragElements[overElemIndex].getElementsByClassName("my-todo-holder")[0].innerHTML
+                    swapInnerContent(getDragElem(), dragElements[dragElemIndex])
+                    swapInnerContent(leaveDraggable, dragElements[overElemIndex])
 
                     overElemIndex = -1
                 }
