@@ -7,6 +7,7 @@ defmodule TodoAppWeb.TodoLive do
   import TodoAppWeb.Components.Todo
   import TodoAppWeb.Components.Filter
 
+  @theme :light
   @filters [
     %{name: "all", label: "All", clause: [], selected: true},
     %{name: "active", label: "Active", clause: [done: false]},
@@ -18,10 +19,10 @@ defmodule TodoAppWeb.TodoLive do
 
     socket =
       socket
-      |> assign(theme: :light)
-      |> assign(filters: @filters)
-      |> changeset()
-      |> fetch()
+      |> assign_theme()
+      |> assign_filters()
+      |> assign_changeset()
+      |> assign_todos()
 
     {:ok, socket}
   end
@@ -98,7 +99,7 @@ defmodule TodoAppWeb.TodoLive do
   def handle_info({Todos, [:todo | _], _}, socket) do
     socket =
       socket
-      |> fetch()
+      |> assign_todos()
 
     {:noreply, socket}
   end
@@ -176,10 +177,30 @@ defmodule TodoAppWeb.TodoLive do
       end
 
     socket
+    |> assign_theme(theme)
+  end
+
+  defp assign_theme(socket) do
+    socket
+    |> assign_theme(@theme)
+  end
+
+  defp assign_theme(socket, theme) when theme in [:light, :dark] do
+    socket
     |> assign(theme: theme)
   end
 
-  defp fetch(socket) do
+  defp assign_filters(socket) do
+    socket
+    |> assign_filters(@filters)
+  end
+
+  defp assign_filters(socket, filters) do
+    socket
+    |> assign(filters: filters)
+  end
+
+  defp assign_todos(socket) do
     filter =
       Enum.find(socket.assigns.filters, fn f ->
         Map.get(f, :selected) == true
@@ -189,12 +210,12 @@ defmodule TodoAppWeb.TodoLive do
     |> assign(todos: Todos.list_sorted_todos(filter.clause))
   end
 
-  defp changeset(socket) do
+  defp assign_changeset(socket) do
     socket
-    |> changeset(Todos.change_todo(%Todo{}))
+    |> assign_changeset(Todos.change_todo(%Todo{}))
   end
 
-  defp changeset(socket, changeset) do
+  defp assign_changeset(socket, changeset) do
     socket
     |> assign(changeset: changeset)
   end
@@ -206,7 +227,7 @@ defmodule TodoAppWeb.TodoLive do
 
       {:error, changeset} ->
         socket
-        |> changeset(changeset)
+        |> assign_changeset(changeset)
     end
   end
 
@@ -240,8 +261,8 @@ defmodule TodoAppWeb.TodoLive do
       end)
 
     socket
-    |> assign(filters: filters)
-    |> fetch()
+    |> assign_filters(filters)
+    |> assign_todos()
   end
 
   defp clear_completed(socket) do
