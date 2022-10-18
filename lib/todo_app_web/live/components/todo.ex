@@ -6,6 +6,7 @@ defmodule TodoAppWeb.Components.Todo do
       assigns
       |> assign(:id, "todo-#{assigns.todo.id}")
       |> assign(:checkbox_id, "todo-#{assigns.todo.id}-checkbox")
+
     ~H"""
     <div
       id={@id}

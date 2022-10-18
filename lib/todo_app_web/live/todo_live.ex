@@ -5,9 +5,10 @@ defmodule TodoAppWeb.TodoLive do
   alias TodoApp.Todos.Todo
 
   import TodoAppWeb.Components.Todo
-  import TodoAppWeb.Components.Filter
+  import TodoAppWeb.Components.Filters
 
   @theme :light
+  @filter_event "filter"
   @filters [
     %{name: "all", label: "All", clause: [], selected: true},
     %{name: "active", label: "Active", clause: [done: false]},
@@ -20,6 +21,7 @@ defmodule TodoAppWeb.TodoLive do
     socket =
       socket
       |> assign_theme()
+      |> assign_filter_event()
       |> assign_filters()
       |> assign_changeset()
       |> assign_todos()
@@ -70,12 +72,7 @@ defmodule TodoAppWeb.TodoLive do
       <div class="todos-footer todo-holder card">
         <span>5 items left</span>
         <div class="filters">
-          <%= for filter <- @filters do %>
-            <.filter
-              filter={filter}
-              filter_event="filter"
-            />
-          <% end %>
+          <.filters filters={@filters} filter_event={@filter_event}/>
         </div>
         <button type="button" phx-click="clear">
           Clear Completed
@@ -84,12 +81,7 @@ defmodule TodoAppWeb.TodoLive do
     </div>
 
     <div class="filters todo-holder card rounded-border elevated">
-      <%= for filter <- @filters do %>
-        <.filter
-          filter={filter}
-          filter_event="filter"
-        />
-      <% end %>
+      <.filters filters={@filters} filter_event={@filter_event}/>
     </div>
 
     <div class="hint">Drag and drop to reorder list</div>
@@ -137,7 +129,7 @@ defmodule TodoAppWeb.TodoLive do
     {:noreply, socket}
   end
 
-  def handle_event("filter", %{"name" => filter_name}, socket) do
+  def handle_event(@filter_event, %{"name" => filter_name}, socket) do
     socket =
       socket
       |> filter(filter_name)
@@ -180,22 +172,17 @@ defmodule TodoAppWeb.TodoLive do
     |> assign_theme(theme)
   end
 
-  defp assign_theme(socket) do
-    socket
-    |> assign_theme(@theme)
-  end
-
-  defp assign_theme(socket, theme) when theme in [:light, :dark] do
+  defp assign_theme(socket, theme \\ @theme) when theme in [:light, :dark] do
     socket
     |> assign(theme: theme)
   end
 
-  defp assign_filters(socket) do
+  defp assign_filter_event(socket, filter_event \\ @filter_event) do
     socket
-    |> assign_filters(@filters)
+    |> assign(filter_event: filter_event)
   end
 
-  defp assign_filters(socket, filters) do
+  defp assign_filters(socket, filters \\ @filters) do
     socket
     |> assign(filters: filters)
   end
