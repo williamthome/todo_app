@@ -34,13 +34,14 @@ defmodule TodoAppWeb.TodoLive do
       :let={f}
       for={@changeset}
       phx-submit="create"
+      phx-hook="FormReset"
     >
       <div class="checkbox-container">
         <%= checkbox f, :done, class: "checkbox-input checkbox-icon" %>
         <%= label f, :done, "", class: "checkbox-icon" %>
       </div>
 
-      <%= text_input f, :title, placeholder: "Create a new todo.." %>
+      <%= text_input f, :title, placeholder: "Create a new todo..", phx_reset: "" %>
     </.form>
 
     <div class="todos card rounded-border elevated">
