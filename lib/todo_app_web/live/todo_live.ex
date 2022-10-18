@@ -33,22 +33,24 @@ defmodule TodoAppWeb.TodoLive do
     ~H"""
     <.form
       id="todo_form"
-      class="todo-holder card rounded-border"
+      class="card rounded-border"
       :let={f}
       for={@changeset}
       phx-submit="create"
       phx-hook="FormReset"
     >
-      <div class="checkbox-container">
-        <%= checkbox f, :done, class: "checkbox-input checkbox-icon" %>
-        <%= label f, :done, "", class: "checkbox-icon" %>
-      </div>
+      <div class="card-body fields">
+        <div class="checkbox-container">
+          <%= checkbox f, :done, class: "checkbox-input checkbox-icon" %>
+          <%= label f, :done, "", class: "checkbox-icon" %>
+        </div>
 
-      <%= text_input f, :title, placeholder: "Create a new todo..", phx_reset: "" %>
+        <%= text_input f, :title, placeholder: "Create a new todo..", phx_reset: "" %>
+      </div>
     </.form>
 
-    <div class="todos card rounded-border elevated">
-      <div id="drag" phx-hook="Drag" class="todos todos-holder">
+    <div class="card rounded-border elevated">
+      <div id="drag" phx-hook="Drag" class="todos">
         <%= for todo <- @todos do %>
           <div
             id={"todo-#{todo.id}-holder"}
@@ -69,22 +71,24 @@ defmodule TodoAppWeb.TodoLive do
         <% end %>
       </div>
 
-      <div class="todos-footer todo-holder card">
-        <span>5 items left</span>
-        <div class="filters">
-          <.filters filters={@filters} filter_event={@filter_event}/>
+      <div class="card">
+        <div class="card-body todos-footer">
+          <span>5 items left</span>
+          <div class="filters filters--desktop">
+            <.filters filters={@filters} filter_event={@filter_event}/>
+          </div>
+          <button type="button" phx-click="clear">
+            Clear Completed
+          </button>
         </div>
-        <button type="button" phx-click="clear">
-          Clear Completed
-        </button>
       </div>
     </div>
 
-    <div class="filters todo-holder card rounded-border elevated">
+    <div class="card card-body rounded-border elevated filters filters--mobile">
       <.filters filters={@filters} filter_event={@filter_event}/>
     </div>
 
-    <div class="hint">Drag and drop to reorder list</div>
+    <footer>Drag and drop to reorder list</footer>
     """
   end
 

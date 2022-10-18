@@ -228,6 +228,11 @@ header h1 {
   background-color: var(--card-bg);
 }
 
+.card-body {
+  height: var(--card-height);
+  position: relative;
+}
+
 .elevated {
   box-shadow: var(--shadow-elev-1);
 }
@@ -246,16 +251,14 @@ header h1 {
   transition: background-image var(--transition-duration) var(--transition-function);
 }
 
-.todo-holder {
-  height: var(--card-height);
-  position: relative;
+#todo_form {
+  margin-bottom: var(--main-padding);
 }
 
-#todo_form {
+#todo_form .fields {
   display: grid;
   grid-template-columns: auto 1fr;
   padding-left: var(--main-padding);
-  margin-bottom: var(--main-padding);
 }
 
 #todo_form #todo_form_title {
@@ -273,7 +276,7 @@ header h1 {
   outline-color: var(--primary-color);
 }
 
-.todos-holder {
+.todos {
   max-height: 25rem;
   overflow-y: auto;
 }
@@ -339,7 +342,14 @@ header h1 {
   height: var(--btn-icon-size);
 }
 
-.card.filters {
+.filters {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.filters--mobile {
   display: none;
 }
 
@@ -352,7 +362,7 @@ header h1 {
   color: var(--selected-filter-color);
 }
 
-.hint {
+footer {
   padding: calc(var(--main-padding)  * 2.5) 0;
   text-align: center;
   color: var(--secondary-color);
@@ -401,17 +411,14 @@ header h1 {
    ---------------------------------*/
 
 @media only screen and (max-width: 600px) {
-  .filters {
+  .filters--desktop {
     display: none;
   }
 
-  .card.filters {
+  .filters--mobile {
     display: grid;
-    grid-auto-flow: column;
     column-gap: var(--main-padding);
     margin-top: var(--main-padding);
-    align-items: center;
-    justify-content: center;
     font-weight: var(--bold-weight);
   }
 }
