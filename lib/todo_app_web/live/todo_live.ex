@@ -14,6 +14,8 @@ defmodule TodoAppWeb.TodoLive do
   ]
 
   def mount(_args, _session, socket) do
+    Todos.subscribe()
+
     socket =
       socket
       |> assign(theme: :light)
@@ -92,6 +94,14 @@ defmodule TodoAppWeb.TodoLive do
     """
   end
 
+  def handle_info({Todos, [:todo | _], _}, socket) do
+    socket =
+      socket
+      |> fetch()
+
+    {:noreply, socket}
+  end
+
   def handle_event("toggle_theme", %{}, socket) do
     socket =
       socket
@@ -147,7 +157,7 @@ defmodule TodoAppWeb.TodoLive do
 
     reply =
       case Todos.update_position(from, to) do
-        :ok ->
+        {:ok, {_from_todo, _to_todo}} ->
           %{result: :ok}
         {:error, reason} ->
           IO.inspect({:error, reason})
@@ -192,7 +202,6 @@ defmodule TodoAppWeb.TodoLive do
     case Todos.create_todo(attrs) do
       {:ok, %Todo{}} ->
         socket
-        |> fetch()
 
       {:error, changeset} ->
         socket
@@ -211,14 +220,12 @@ defmodule TodoAppWeb.TodoLive do
     end)
 
     socket
-    |> fetch()
   end
 
   defp delete_todo(socket, id) do
     Todos.get_todo_and_callback(id, &Todos.delete_todo/1)
 
     socket
-    |> fetch()
   end
 
   defp filter(socket, filter_name) do
@@ -240,6 +247,5 @@ defmodule TodoAppWeb.TodoLive do
     Todos.clear_completed()
 
     socket
-    |> fetch()
   end
 end

@@ -8,6 +8,15 @@ defmodule TodoApp.Todos do
 
   alias TodoApp.Todos.Todo
 
+  @topic inspect(__MODULE__)
+
+  @doc """
+  Subscribe to real time updates.
+  """
+  def subscribe do
+    Phoenix.PubSub.subscribe(TodoApp.PubSub, @topic)
+  end
+
   @doc """
   Returns the list of todos.
 
@@ -115,6 +124,7 @@ defmodule TodoApp.Todos do
     }
     |> Todo.changeset(attrs)
     |> Repo.insert()
+    |> broadcast_change([:todo, :created])
   end
 
   @doc """
@@ -133,6 +143,7 @@ defmodule TodoApp.Todos do
     todo
     |> Todo.changeset(attrs)
     |> Repo.update()
+    |> broadcast_change([:todo, :updated])
   end
 
   @doc """
@@ -141,7 +152,7 @@ defmodule TodoApp.Todos do
   ## Examples
 
       iex> update_position(0, 2)
-      {:ok, :ok}
+      {:ok, {from_todo, to_todo}}
 
       iex> update_todo(-1, -1)
       {:error, any()}
@@ -166,13 +177,11 @@ defmodule TodoApp.Todos do
       to_changeset = change_todo(to_todo, %{position: from_position})
       Repo.update!(to_changeset)
 
-      :ok
+      {from_todo, to_todo}
     end)
 
-    case result do
-      {:ok, :ok} -> :ok
-      {:error, reason} -> {:error, reason}
-    end
+    result
+    |> broadcast_change([:todo, :ordered])
   end
 
   @doc """
@@ -189,6 +198,7 @@ defmodule TodoApp.Todos do
   """
   def delete_todo(%Todo{} = todo) do
     Repo.delete(todo)
+    |> broadcast_change([:todo, :deleted])
   end
 
   @doc """
@@ -206,6 +216,7 @@ defmodule TodoApp.Todos do
       where: t.done
     )
     |> Repo.delete_all()
+    |> broadcast_change([:todo, :completed_cleared])
   end
 
   @doc """
@@ -219,5 +230,16 @@ defmodule TodoApp.Todos do
   """
   def change_todo(%Todo{} = todo, attrs \\ %{}) do
     Todo.changeset(todo, attrs)
+  end
+
+  defp broadcast_change({:ok, result}, event) do
+    msg = {__MODULE__, event, result}
+    Phoenix.PubSub.broadcast(TodoApp.PubSub, @topic, msg)
+
+    {:ok, result}
+  end
+
+  defp broadcast_change({:error, reason}, _event) do
+    {:error, reason}
   end
 end
