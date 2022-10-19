@@ -12,7 +12,8 @@ defmodule TodoApp.TodosFixtures do
       attrs
       |> Enum.into(%{
         done: true,
-        title: "some title"
+        title: "some title",
+        position: 0
       })
       |> TodoApp.Todos.create_todo()
 

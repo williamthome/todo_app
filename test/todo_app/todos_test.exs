@@ -47,6 +47,15 @@ defmodule TodoApp.TodosTest do
       assert todo == Todos.get_todo!(todo.id)
     end
 
+    test "update_position/1 swap todos position" do
+      from_todo = todo_fixture(%{position: 0})
+      to_todo = todo_fixture(%{position: 1})
+
+      assert {:ok, {from_todo, to_todo}} = Todos.update_position(from_todo.id, to_todo.id)
+      assert Todos.get_todo!(from_todo.id).position == to_todo.position
+      assert Todos.get_todo!(to_todo.id).position == from_todo.position
+    end
+
     test "delete_todo/1 deletes the todo" do
       todo = todo_fixture()
       assert {:ok, %Todo{}} = Todos.delete_todo(todo)
